@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { FaCaretDown, FaCaretRight } from 'react-icons/fa';
-import { ChannelBody, ChannelHeader } from './ChannelMenu';
+import { ChannelBody, ChannelHeader, ChannelName, MessageCount } from './ChannelMenu';
 
 const DMMenu = () => {
   return (
@@ -17,7 +17,8 @@ const DMMenu = () => {
           <span className="avatar">
             <img src="" />
           </span>
-          <span className="name">테스트</span>
+          <ChannelName>테스트</ChannelName>
+          <MessageCount>2</MessageCount>
         </DMlList>
       </ChannelBody>
     </>
@@ -27,7 +28,7 @@ const DMMenu = () => {
 const DMlList = styled.div`
   height: 28px;
   line-height: 28px;
-  padding-left: 29px;
+  padding: 0 16px 0 29px;
   display: flex;
   align-items: center;
   &:hover {
@@ -42,10 +43,6 @@ const DMlList = styled.div`
       width: 20px;
       height: 20px;
     }
-  }
-  .name {
-    height: 20px;
-    line-height: 20px;
   }
 `;
 

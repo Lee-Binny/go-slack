@@ -14,8 +14,9 @@ const ChannelMenu = () => {
       </ChannelHeader>
       <ChannelBody>
         <ChannelList>
-          <BsHash/>
-          <span>채널명</span>
+          <BsHash />
+          <ChannelName>채널명</ChannelName>
+          <MessageCount>1</MessageCount>
         </ChannelList>
       </ChannelBody>
     </>
@@ -52,8 +53,9 @@ export const ChannelBody = styled.div`
 const ChannelList = styled.div`
   height: 28px;
   line-height: 28px;
-  padding-left: 29px;
+  padding: 0 16px 0 29px;
   display: flex;
+  align-items: center;
   &:hover {
     background: rgb(256, 256, 256, 0.1);
   }
@@ -63,6 +65,25 @@ const ChannelList = styled.div`
     height: 28px;
     margin-right: 4px;
   }
+`;
+
+export const ChannelName = styled.span`
+  margin-right: auto;
+`;
+
+export const MessageCount = styled.span`
+  margin-right: 2px;
+  opacity: 1;
+  transition: opacity 0.1s;
+  border-radius: 16px;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  height: 18px;
+  line-height: 18px;
+  margin-left: 4px;
+  padding: 0 9px;
+  background: #cd2553;
 `;
 
 export default ChannelMenu;
