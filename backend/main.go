@@ -8,6 +8,7 @@ import (
 	"os"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
+	"go-slack/models"
 )
 
 func main() {
@@ -16,11 +17,19 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	_, err = gorm.Open(mysql.Open(os.Getenv("DBDNS")), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(os.Getenv("DBDNS")), &gorm.Config{})
 	if err != nil {
 		fmt.Println("DB Connecting Error: ", err)
 		return
 	}
+
+	db.AutoMigrate(
+		&models.User{},
+		&models.Channel{},
+		&models.ChannelMember{},
+		&models.Chat{},
+		&models.Thread{},
+	)
 
 	r := gin.Default()
 	r.GET("/", func(c *gin.Context) {
