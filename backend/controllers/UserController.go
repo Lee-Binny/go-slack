@@ -1,10 +1,13 @@
 package controllers
 
 import (
+	"errors"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"go-slack/dto"
 	"go-slack/services"
 	"net/http"
+	"strconv"
 )
 
 func GetAllUsers(c *gin.Context) {
@@ -14,7 +17,12 @@ func GetAllUsers(c *gin.Context) {
 }
 
 func GetOneUser(c *gin.Context) {
-	user, err := services.GetOneUser(c.Param("id"))
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		panic(err)
+	}
+
+	user, err := services.GetOneUser(id)
 	if err != nil {
 		ResponseErrorWithCode(c, http.StatusNotFound, err)
 		return
@@ -38,14 +46,14 @@ func GetOneUserByName(c *gin.Context) {
 }
 
 func SignUp(c *gin.Context) {
-	req := &dto.SignUpDto{}
-	err := c.Bind(req)
+	dto := &dto.SignUpDto{}
+	err := c.Bind(dto)
 	if err != nil {
 		ResponseErrorWithCode(c, http.StatusBadRequest, err)
 		return
 	}
 
-	user, err := services.SignUp(req)
+	user, err := services.SignUp(dto)
 	if err != nil {
 		ResponseErrorWithCode(c, http.StatusBadRequest, err)
 		return
@@ -57,18 +65,36 @@ func SignUp(c *gin.Context) {
 }
 
 func SignIn(c *gin.Context) {
-	req := &dto.SignInDto{}
-	err := c.Bind(req)
+	dto := &dto.SignInDto{}
+	err := c.Bind(dto)
 	if err != nil {
 		ResponseErrorWithCode(c, http.StatusBadRequest, err)
 		return
 	}
 
-	err = services.SignIn(req)
+	user, err := services.SignIn(dto)
 	if err != nil {
 		ResponseErrorWithCode(c, http.StatusBadRequest, err)
 		return
 	}
 
-	ResponseOK(c)
+	session := sessions.Default(c)
+	session.Set("userId", user.Id)
+	session.Set("userUid", user.Uid)
+	session.Set("userName", user.Name)
+	err = session.Save()
+	if err != nil {
+		ResponseErrorWithCode(c, http.StatusBadRequest, errors.New("session doesn't save"))
+		return
+	}
+
+	ResponseOKWithObject(c, gin.H{
+		"user": user,
+	})
+}
+
+func Logout(c *gin.Context) {
+	session := sessions.Default(c)
+	session.Clear()
+	session.Save()
 }

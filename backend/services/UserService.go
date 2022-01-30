@@ -11,7 +11,7 @@ func GetAllUsers() *models.Users {
 	return repositories.GetAllUsers()
 }
 
-func GetOneUser(id string) (*models.User, error) {
+func GetOneUser(id int64) (*models.User, error) {
 	return repositories.GetOneUser(id)
 }
 
@@ -34,18 +34,18 @@ func SignUp(dto *dto.SignUpDto) (*models.User, error) {
 	return user, nil
 }
 
-func SignIn(dto *dto.SignInDto) error {
+func SignIn(dto *dto.SignInDto) (*models.User, error) {
 	user, err := repositories.GetOneUserByUid(dto.Uid)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	err = user.IsMatchedPassword(dto.Password)
 	if err != nil {
-		return errors.New("not matched password")
+		return nil, errors.New("not matched password")
 	}
 
-	// TODO 토큰 생성, 유저 찾기 Not Fount 처리
+	// TODO 토큰 생성
 
-	return nil
+	return user, nil
 }
